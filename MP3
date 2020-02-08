@@ -31,15 +31,15 @@ __global__ void matrixMultiply(float *A, float *B, float *C,
   
   for (int ph = 0; ph < numAColumns / TILE_WIDTH; ++ph) {
     Ads[ty][tx] = A[Row * numAColumns + ph * TILE_WIDTH + tx];
-    Bds[ty][tx] = A[(ph * TILE_WIDTH + ty) * numBColumns+ Col];
+    Bds[ty][tx] = B[(ph * TILE_WIDTH + ty) * numBColumns+ Col];
     __syncthreads();
     
     for (int k = 0; k < TILE_WIDTH; ++k) {
       Pvalue += Ads[ty][k] * Bds[k][tx];
       
     }
-    
     __syncthreads();
+    
   }
   
   C[Row * numCColumns + Col] = Pvalue;
