@@ -18,8 +18,8 @@ __global__ void matrixMultiply(float *A, float *B, float *C,
                                 int numBRows, int numBColumns,
                                 int numCRows, int numCColumns) {
 
-  __shared__ float Ads[TILE_WIDTH][TILE_WIDTH];
-  __shared__ float Bds[TILE_WIDTH][TILE_WIDTH];
+  __shared__ float Ad[TILE_WIDTH][TILE_WIDTH];
+  __shared__ float Bd[TILE_WIDTH][TILE_WIDTH];
   int bx = blockIdx.x;
   int by = blockIdx.y;
   int tx = threadIdx.x;
@@ -29,9 +29,9 @@ __global__ void matrixMultiply(float *A, float *B, float *C,
   
   float Pvalue = 0;
   
-  for (int ph = 0; ph < numAColumns / TILE_WIDTH; ++ph) {
-    Ads[ty][tx] = A[Row * numAColumns + ph * TILE_WIDTH + tx];
-    Bds[ty][tx] = B[(ph * TILE_WIDTH + ty) * numBColumns+ Col];
+  for (int i = 0; i < numAColumns / TILE_WIDTH; ++i) {
+    Ad[ty][tx] = A[Row * numAColumns + i * TILE_WIDTH + tx];
+    Bd[ty][tx] = B[(i * TILE_WIDTH + ty) * numBColumns+ Col];
     __syncthreads();
     
     for (int k = 0; k < TILE_WIDTH; ++k) {
